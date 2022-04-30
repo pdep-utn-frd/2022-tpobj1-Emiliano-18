@@ -1,10 +1,19 @@
 import wollok.game.*
 import dino.* 
 
+
+object salto {
+	
+	method play(){
+		game.sound("sounds/sonido-del-salto.mp3").play()
+	}
+}
 program dino {
 
 	juego.configurar()
 	juego.iniciar()
+	keyboard.space().onPressDo({salto.play()})
+	game.onTick(800, "actualizar",{dino.actualizar()})
 	game.start()
-
+	
 }

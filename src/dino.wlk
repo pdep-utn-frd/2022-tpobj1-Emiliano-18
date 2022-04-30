@@ -23,6 +23,7 @@ object juego{
 		dino.iniciar()
 		reloj.iniciar()
 		cactus.iniciar()
+		bomba.iniciar()
 	}
 	
 	method jugar(){
@@ -39,7 +40,9 @@ object juego{
 		game.addVisual(gameOver)
 		cactus.detener()
 		reloj.detener()
+		gameOver.play()
 		dino.morir()
+		
 	}
 	
 }
@@ -47,6 +50,9 @@ object juego{
 object gameOver {
 	method position() = game.center()
 	method text() = "GAME OVER"
+	method play(){
+		game.sound("sounds/game-over.mp3").play()
+	}
 	
 
 }
@@ -75,12 +81,12 @@ object cactus {
 	const posicionInicial = game.at(game.width()-1,suelo.position().y())
 	var position = posicionInicial
 
-	method image() = "cactus.png"
+	method image() = "img/cactus.png"
 	method position() = position
 	
 	method iniciar(){
 		position = posicionInicial
-		game.onTick(velocidad,"moverCactus",{self.mover()})
+		game.onTick(velocidad*2,"moverCactus",{self.mover()})
 	}
 	
 	method mover(){
@@ -97,19 +103,54 @@ object cactus {
 	}
 }
 
+object bomba{
+	const posicionInicial = game.at(game.width()-0.5,suelo.position().y())
+	var position = posicionInicial
+	
+	method image() = "img/bomba.png"
+	method position() = position
+	
+	method iniciar(){
+		position = posicionInicial
+		game.onTick(velocidad,"moverBomba",{self.mover()})
+	}
+	
+	method mover(){
+		position = position.left(1)
+		if (position.x() == -1)
+			position = posicionInicial
+	}
+	
+	method chocar(){
+		game.addVisual(explosion)
+		juego.terminar()
+	}
+    method detener(){
+		game.removeTickEvent("moverBomba")
+	}
+}
+
+object explosion{
+	method position() = game.at(6,4)
+	method image() = "img/explosion3.png"	
+}
+
+
 object suelo{
 	
 	method position() = game.origin().up(1)
 	
-	method image() = "suelo.png"
+	method image() = "img/suelo.png"
 }
 
 
 object dino {
 	var vivo = true
-	var position = game.at(1,suelo.position().y())
+	var position = game.at(3.5,suelo.position().y())
+	var image = "img/dino.png"
 	
-	method image() = "dino.png"
+	method image() = image
+
 	method position() = position
 	
 	method saltar(){
@@ -136,4 +177,16 @@ object dino {
 	method estaVivo() {
 		return vivo
 	}
+	
+ 	method actualizar(){
+		if (image == "img/dino.png" && vivo){
+			image = "img/dino2.png"
+			return image }
+		else {
+			image = "img/dino.png"
+			return image}
+	}
 }
+
+
+
