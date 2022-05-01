@@ -13,7 +13,8 @@ program dino {
 	juego.configurar()
 	juego.iniciar()
 	keyboard.space().onPressDo({salto.play()})
-	game.onTick(800, "actualizar",{dino.actualizar()})
+	game.onTick(500, "actualizar",{dino.actualizar()})
 	game.start()
 	
 }
+ 

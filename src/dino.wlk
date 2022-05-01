@@ -10,6 +10,7 @@ object juego{
 		game.title("Dino Game")
 		game.addVisual(suelo)
 		game.addVisual(cactus)
+		game.addVisual(bomba)
 		game.addVisual(dino)
 		game.addVisual(reloj)
 	
@@ -19,7 +20,7 @@ object juego{
 		
 	} 
 	
-	method    iniciar(){
+	method iniciar(){
 		dino.iniciar()
 		reloj.iniciar()
 		cactus.iniciar()
@@ -35,21 +36,24 @@ object juego{
 		}
 		
 	}
+	 
+	  
+	 
 	
 	method terminar(){
-		game.addVisual(gameOver)
+		game.schedule(1000,{game.addVisual(gameOver)})
 		cactus.detener()
+		bomba.detener()
 		reloj.detener()
-		gameOver.play()
 		dino.morir()
-		
+		game.schedule(250,{gameOver.play()})
 	}
 	
 }
 
 object gameOver {
-	method position() = game.center()
-	method text() = "GAME OVER"
+	method position() = game.at(2.3,3.5)
+	method image() = "img/game-over.png"
 	method play(){
 		game.sound("sounds/game-over.mp3").play()
 	}
@@ -60,6 +64,7 @@ object gameOver {
 object reloj {
 	
 	var tiempo = 0
+	var property punt = 0
 	
 	method text() = tiempo.toString()
 	method position() = game.at(1, game.height()-1)
@@ -67,6 +72,7 @@ object reloj {
 	method pasarTiempo() {
 		tiempo = tiempo +1
 	}
+	
 	method iniciar(){
 		tiempo = 0
 		game.onTick(100,"tiempo",{self.pasarTiempo()})
@@ -74,11 +80,12 @@ object reloj {
 	method detener(){
 		game.removeTickEvent("tiempo")
 	}
+	
 }
 
 object cactus {
 	 
-	const posicionInicial = game.at(game.width()-1,suelo.position().y())
+	const posicionInicial = game.at(game.width()+1,suelo.position().y())
 	var position = posicionInicial
 
 	method image() = "img/cactus.png"
@@ -86,7 +93,7 @@ object cactus {
 	
 	method iniciar(){
 		position = posicionInicial
-		game.onTick(velocidad*2,"moverCactus",{self.mover()})
+		game.onTick(velocidad*1.5,"moverCactus",{self.mover()})
 	}
 	
 	method mover(){
@@ -103,16 +110,17 @@ object cactus {
 	}
 }
 
-object bomba{
-	const posicionInicial = game.at(game.width()-0.5,suelo.position().y())
+object bomba {
+	 
+	const posicionInicial = game.at(game.width()-3,suelo.position().y())
 	var position = posicionInicial
-	
+
 	method image() = "img/bomba.png"
 	method position() = position
 	
 	method iniciar(){
 		position = posicionInicial
-		game.onTick(velocidad,"moverBomba",{self.mover()})
+		game.onTick(velocidad*1.5,"moverBomba",{self.mover()})
 	}
 	
 	method mover(){
@@ -123,16 +131,24 @@ object bomba{
 	
 	method chocar(){
 		game.addVisual(explosion)
+		explosion.play()
 		juego.terminar()
+		game.schedule(1000,{game.removeVisual(explosion)} )
+		
 	}
     method detener(){
 		game.removeTickEvent("moverBomba")
+		
 	}
 }
 
+
 object explosion{
-	method position() = game.at(6,4)
-	method image() = "img/explosion3.png"	
+	method position() = game.at(3.5,2.5)
+	method image() = "img/explosion3.png"
+	method play(){
+		game.sound("sounds/explosion.mp3").play()
+	}	
 }
 
 
@@ -146,7 +162,7 @@ object suelo{
 
 object dino {
 	var vivo = true
-	var position = game.at(3.5,suelo.position().y())
+	var position = game.at(2,suelo.position().y())
 	var image = "img/dino.png"
 	
 	method image() = image
@@ -156,7 +172,7 @@ object dino {
 	method saltar(){
 		if(position.y() == suelo.position().y()) {
 			self.subir()
-			game.schedule(velocidad*3,{self.bajar()})
+			game.schedule(velocidad*2,{self.bajar()})
 		}
 	}
 	
@@ -168,7 +184,7 @@ object dino {
 		position = position.down(1)
 	}
 	method morir(){
-		game.say(self,"¡Auch!")
+		game.say(self,"¡Auch, eso dolio!")
 		vivo = false
 	}
 	method iniciar() {
@@ -187,6 +203,5 @@ object dino {
 			return image}
 	}
 }
-
 
 
