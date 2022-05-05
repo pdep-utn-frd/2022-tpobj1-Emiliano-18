@@ -11,6 +11,9 @@ object juego{
 		game.addVisual(suelo)
 		game.addVisual(cactus)
 		game.addVisual(bomba)
+		game.addVisual(nube1)
+	 	game.addVisual(nube2)
+	 	game.addVisual(nube3)
 		game.addVisual(dino)
 		game.addVisual(reloj)
 	
@@ -25,6 +28,9 @@ object juego{
 		reloj.iniciar()
 		cactus.iniciar()
 		bomba.iniciar()
+		nube1.iniciar()
+		nube2.iniciar()
+		nube3.iniciar()
 	}
 	
 	method jugar(){
@@ -45,6 +51,9 @@ object juego{
 		cactus.detener()
 		bomba.detener()
 		reloj.detener()
+		nube1.detener()
+		nube2.detener()
+		nube3.detener()
 		dino.morir()
 		game.schedule(250,{gameOver.play()})
 	}
@@ -93,11 +102,11 @@ object cactus {
 	
 	method iniciar(){
 		position = posicionInicial
-		game.onTick(velocidad*1.5,"moverCactus",{self.mover()})
+		game.onTick(velocidad*0.8,"moverCactus",{self.mover()})
 	}
 	
 	method mover(){
-		position = position.left(1)
+		position = position.left(0.5)
 		if (position.x() == -1)
 			position = posicionInicial
 	}
@@ -120,11 +129,11 @@ object bomba {
 	
 	method iniciar(){
 		position = posicionInicial
-		game.onTick(velocidad*1.5,"moverBomba",{self.mover()})
+		game.onTick(velocidad*0.8,"moverBomba",{self.mover()})
 	}
 	
 	method mover(){
-		position = position.left(1)
+		position = position.left(0.5)
 		if (position.x() == -1)
 			position = posicionInicial
 	}
@@ -145,7 +154,7 @@ object bomba {
 
 object explosion{
 	method position() = game.at(3.5,2.5)
-	method image() = "img/explosion3.png"
+	method image() = "img/explosion.png"
 	method play(){
 		game.sound("sounds/explosion.mp3").play()
 	}	
@@ -157,6 +166,76 @@ object suelo{
 	method position() = game.origin().up(1)
 	
 	method image() = "img/suelo.png"
+}
+
+
+object nube1 {
+	 
+	const posicionInicial = game.at(game.width(),6)
+	var position = posicionInicial
+
+	method image() = "img/Nube1.png"
+	method position() = position
+	
+	method iniciar(){
+		position = posicionInicial
+		game.onTick(velocidad,"moverNube1",{self.mover()})
+	}
+	
+	method mover(){
+		position = position.left(0.5)
+		if (position.x() == -3)
+			position = posicionInicial
+	}
+	
+
+    method detener(){
+		game.removeTickEvent("moverNube1")
+	}
+}
+ 
+object nube2 {
+	const posicionInicial = game.at(game.width()-1,4)
+	var position = posicionInicial
+	method position() = position
+	method image() = "img/Nube2.png"
+	
+	method iniciar(){
+		position = posicionInicial
+		game.onTick(velocidad,"moverNube2",{self.mover()})
+	}
+	
+	method mover(){
+		position = position.left(0.5)
+		if (position.x() == -4)
+			position = posicionInicial
+	}
+	
+	method detener(){
+		game.removeTickEvent("moverNube2")
+	}
+}
+
+object nube3 {
+	const posicionInicial = game.at(0,5)
+	var position = posicionInicial
+	method position() = position
+	method image() = "img/Nube3.png"
+	
+	method iniciar(){
+		position = posicionInicial
+		game.onTick(velocidad*1.05,"moverNube3",{self.mover()})
+	}
+	
+	method mover(){
+		position = position.right(0.5)
+		if (position.x() == +12)
+			position = posicionInicial
+	}
+	
+	method detener(){
+		game.removeTickEvent("moverNube3")
+	}
 }
 
 
@@ -172,7 +251,7 @@ object dino {
 	method saltar(){
 		if(position.y() == suelo.position().y()) {
 			self.subir()
-			game.schedule(velocidad*2,{self.bajar()})
+			game.schedule(velocidad*2.5,{self.bajar()})
 		}
 	}
 	
@@ -196,7 +275,7 @@ object dino {
 	
  	method actualizar(){
 		if (image == "img/dino.png" && vivo){
-			image = "img/dino2.png"
+			image = "img/dino2.1.png"
 			return image }
 		else {
 			image = "img/dino.png"
