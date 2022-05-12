@@ -8,7 +8,7 @@ object salto {
 		game.sound("sounds/sonido-del-salto.mp3").play()
 	}
 }
-program dino {
+program dinosaurio {
 
 	juego.configurar()
 	juego.iniciar()
